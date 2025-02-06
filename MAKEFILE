@@ -1,0 +1,18 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -g -Iinclude
+SRC = src/malloc.c src/free.c src/allocator.c
+TESTS = tests/test_allocator.c
+TARGET = allocator
+TEST_TARGET = test_allocator
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+
+test: $(SRC) $(TESTS)
+	$(CC) $(CFLAGS) -o $(TEST_TARGET) $(SRC) $(TESTS)
+	./$(TEST_TARGET)
+
+clean:
+	rm -f $(TARGET) $(TEST_TARGET)
