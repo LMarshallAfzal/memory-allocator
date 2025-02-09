@@ -1,5 +1,5 @@
-#include <__stddef_size_t.h>
-#include "allocator.c"
+#include <unistd.h>
+#include "allocator.h"
 
 void* malloc(size_t size) {
     block_t *free_block = find_free_block(size);
@@ -14,7 +14,7 @@ void* malloc(size_t size) {
             return NULL;
         }
 
-        block_t *new_block; 
+        block_t *new_block = (block_t *)new_memory; 
         new_block->size = size;
         new_block->free = 0;
         new_block->next = head_block;

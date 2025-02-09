@@ -8,6 +8,9 @@
 *.obj
 *.elf
 
+# Build directories
+build/
+
 # Linker output
 *.ilk
 *.map
@@ -36,6 +39,7 @@
 *.i*86
 *.x86_64
 *.hex
+test_allocator
 
 # Debug files
 *.dSYM/
@@ -146,7 +150,6 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Testing
-Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json

@@ -1,4 +1,3 @@
-// Core allocator logic (e.g., block management)
 #include <stdlib.h>
 #include <unistd.h>
 #include "allocator.h"
@@ -6,6 +5,7 @@
 static block_t *head_block = NULL;
 
 void init_allocator();
+block_t *find_free_block(size_t);
 
 void init_allocator() {
     size_t initial_size = 4096;
@@ -19,8 +19,6 @@ void init_allocator() {
     head_block->free = 1;
     head_block->next = NULL;
 }
-
-// Find and return a free block
 
 block_t *find_free_block(size_t size) {
     block_t *current = head_block;
