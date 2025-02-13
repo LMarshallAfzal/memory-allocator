@@ -40,6 +40,7 @@ build/
 *.x86_64
 *.hex
 test_allocator
+main_allocator
 
 # Debug files
 *.dSYM/
