@@ -8,20 +8,31 @@ void* malloc(size_t size) {
         free_block->free = 0;
         return (void *)(free_block + 1);
     } else {
-        void *new_memory = sbrk(size);
+        size_t total_size = sizeof(block_t) + size;
 
-        if (new_memory == (void *)-1) {
+        block_t *new_block = sbrk(total_size);
+
+        if (new_block == (void *)-1) {
             return NULL;
         }
 
-        block_t *new_block = (block_t *)new_memory; 
         new_block->size = size;
         new_block->free = 0;
-        new_block->next = head_block;
 
-        head_block = new_block;
+        if (head_block == NULL) {
+            head_block = new_block;
+            new_block->next = NULL;
+        } else {
+            block_t *current = head_block;
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = new_block;
+            new_block->next = NULL;
+        }
 
         return (void *)(new_block + 1);
     }
-    
+    // linked list is being built backwards
+    // reuse of freed blocks isn't working
 }
