@@ -2,14 +2,15 @@
 #include <unistd.h>
 #include "allocator.h"
 
-static block_t *head_block = NULL;
+block_t *head_block = NULL;
 
 void init_allocator();
 block_t *find_free_block(size_t);
 
 void init_allocator() {
-    size_t initial_size = 4096;
-    head_block = (block_t *)sbrk(initial_size);
+    size_t initial_size = 128;
+    size_t total_size = sizeof(block_t) + initial_size;
+    head_block = sbrk(total_size);
 
     if (head_block == (void *)-1) {
         return;

@@ -15,7 +15,7 @@ all: $(EXEC_DIR)/test_allocator
 $(EXEC_DIR)/test_allocator: $(OBJ_DIR)/allocator.o $(OBJ_DIR)/free.o $(OBJ_DIR)/malloc.o $(OBJ_DIR)/test_allocator.o
 	gcc $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: src/%.c | $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)
 	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
