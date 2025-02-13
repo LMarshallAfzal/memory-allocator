@@ -23,7 +23,6 @@ void free(void *block) {
         if (current == block_header) {
             if (!current->free) {
                 current->free = 1;
-                printf("Block is freed\n");
             }
             return;
         }

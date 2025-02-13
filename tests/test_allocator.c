@@ -2,23 +2,21 @@
 #include "allocator.h"
 
 int main() {
-    init_allocator();
+    head_block = NULL;
 
     printf("Size of block_t: %zu bytes\n", sizeof(block_t));
 
-    void *ptr1 = malloc(12);
+    void *ptr1 = malloc(11);
     if (ptr1 == NULL) {
         printf("malloc failed\n");
         return 1;
     }
-    printf("Allocated 12 bytes at %p\n", ptr1);
 
     void *ptr2 = malloc(8);
     if (ptr2 == NULL) {
         printf("malloc failed!\n");
         return 1;
     }
-    printf("Allocated 8 bytes at %p\n", ptr2);
 
     block_t *current = head_block;
     int i = 0;
@@ -28,10 +26,17 @@ int main() {
         current = current->next;
     }
 
-    printf("Freeing ptr1\n");
     free(ptr1);
 
-    void *ptr3 = malloc(10);
+    current = head_block;
+    i = 0;
+    while (current != NULL) {
+        printf("Block %d: address=%p, size=%zu, free=%d\n", 
+                i++, current, current->size, current->free);
+        current = current->next;
+    }
+
+    void *ptr3 = malloc(11);
     if (ptr3 == NULL) {
         printf("malloc failed!\n");
         return 1;

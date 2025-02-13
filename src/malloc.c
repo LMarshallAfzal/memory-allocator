@@ -13,7 +13,7 @@
  * The returned pointer points the usable memory area, after the block header.
  * The actuall allocation includes additonal space for the block management header.
  * 
- * Return: Returns a pointer allocated block, or NULL new memory allocation failed.
+ * Return: A pointer to allocated block, or NULL new memory allocation failed.
  */
 void* malloc(size_t size) {
     block_t *free_block = find_free_block(size);
@@ -26,7 +26,7 @@ void* malloc(size_t size) {
 
         block_t *new_block = sbrk(total_size);
 
-        // Check that new sbrk was able to allocate memory
+        // Check that sbrk() was able to more allocate memory
         if (new_block == (void *)-1) {
             return NULL;
         }
@@ -34,6 +34,7 @@ void* malloc(size_t size) {
         new_block->size = size;
         new_block->free = 0;
 
+        // Add available block to the end of the linked list.
         if (head_block == NULL) {
             head_block = new_block;
             new_block->next = NULL;

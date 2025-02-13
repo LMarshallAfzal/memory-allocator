@@ -11,7 +11,6 @@ typedef struct block {
 
 extern block_t *head_block;
 
-void init_allocator();
 block_t *find_free_block(size_t size);
 void *malloc(size_t size);
 void free(void *ptr);
