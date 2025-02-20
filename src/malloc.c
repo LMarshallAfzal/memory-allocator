@@ -37,6 +37,7 @@ void* malloc(size_t size) {
         // Add available block to the end of the linked list.
         if (head_block == NULL) {
             head_block = new_block;
+            new_block->prev = NULL;
             new_block->next = NULL;
         } else {
             block_t *current = head_block;
@@ -44,6 +45,7 @@ void* malloc(size_t size) {
                 current = current->next;
             }
             current->next = new_block;
+            new_block->prev = current;
             new_block->next = NULL;
         }
 

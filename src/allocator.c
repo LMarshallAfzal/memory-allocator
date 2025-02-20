@@ -18,6 +18,7 @@ block_t *find_free_block(size_t size) {
 
     while (current != NULL) {
         if (current->free && current->size >= size) {
+            /* TODO: if current->size is >= double the size of size split the block */
             return current;
         }
         current=current->next;

@@ -18,7 +18,7 @@ void free(void *block) {
 
     block_t *current = head_block;
 
-    // Validate that block is in out list and mark as freed.
+    // Validate that block is in the list and mark as freed.
     while (current != NULL) {
         if (current == block_header) {
             if (!current->free) {
