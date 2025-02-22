@@ -1,6 +1,6 @@
 # Memory Allocator
 
-A basic memory allocator implementation, focusing on the core processes of `malloc()` and `free()`, which are the standard interfaces for dynamic memory allocation in C. It's designed to provide a foundational understanding of memory management at a lower level, similar to how the system's dynamic memory allocation works.
+A basic heap memory allocator implementation, focusing on the core processes of `malloc()` and `free()`, which are the standard interfaces for dynamic memory allocation in C. It's designed to provide a foundational understanding of memory management at a lower level, similar to how the system's dynamic memory allocation works.
 
 ## Getting Started
 
@@ -32,5 +32,10 @@ The `free()` function is responsible for returning a previously allocated memory
 
 4. **Adding to Free List:**  The freed block is then marked as free in the linked list.
 
+### Splitting
+The `split_block()` function is responsible for splitting one large unallocated block into two smaller ones. This reduced wasted memory because only the required amount of memory is used the remainder can be used for other processes.
+
+### Coalescing
+The `coalesce_block()` function is responsible for merging multiple smaller blocks to reduce fragmentation in memory.
 ## Author(s)
 [Leonard Marshall Afzal](https://github.com/LMarshallAfzal)
