@@ -94,3 +94,10 @@ block_t *coalesce_block(block_t *block) {
 
     return block;
 }
+
+block_t* get_user_blocks() {
+    if (head_block != NULL && head_block->next != NULL) {
+        return head_block->next->next;  // Skip first two system-created blocks
+    }
+    return NULL;
+}

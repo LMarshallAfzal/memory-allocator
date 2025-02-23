@@ -69,11 +69,15 @@ int main(void) {
                 break;
             }
             case 3: {
-                block_t *current = head_block;
+                block_t *current = get_user_blocks();
                 int i = 0;
                 printf("\nCurrent Memory Blocks:\n");
                 printf("--------------------------------------------------\n");
                 while (current != NULL) {
+                    if (current->internal) {
+                        current = current->next;
+                        continue;
+                    }
                     printf("Block %d: address=%p, size=%zu, free=%d\n", i++, current, current->size, current->free);
                     current = current->next;
                 }
@@ -81,7 +85,7 @@ int main(void) {
                 break;
             }
             case 4: {
-                printf("Existing demo, Goodbye!\n");
+                printf("Exiting demo, Goodbye!\n");
                 return 0;
             }
             default:
