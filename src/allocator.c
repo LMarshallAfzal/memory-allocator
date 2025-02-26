@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "allocator.h"
 
@@ -19,15 +20,20 @@ block_t *find_free_block(size_t size) {
     block_t *current = head_block;
 
     while (current != NULL) {
-        if (current->free && current->size >= size) {
-
+        if (current->free) {
             if ((current->next && current->next->free) || (current->prev && current->prev->free)) {
                 current = coalesce_block(current);
-            } else if (current->size >= size * 2) {
-                current = split_block(current, size);
+                printf("Coalesced block size: %ld", current->size);
+            } 
+            
+            if (current->size >= size) {
+                if (current->size >= size + sizeof(block_t) + 4) {
+                    current = split_block(current, size);
+                }
+                return current;
             }
 
-            return current;
+            
         }
         current = current->next;
     }
@@ -45,9 +51,9 @@ block_t *find_free_block(size_t size) {
  * Return: A pointer to the resized block
  */
 block_t *split_block(block_t *block, size_t size) {
-    block_t *new_block = (block_t *)((char *)block + sizeof(block_t) + size);
+    block_t *new_block = (block_t *)((char *)(block + 2) + size);
 
-    new_block->size = block->size - sizeof(block_t) - size;
+    new_block->size = block->size - size - sizeof(block_t);
     new_block->free = 1;
     new_block->prev = block;
     new_block->next = block->next;
