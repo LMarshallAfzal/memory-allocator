@@ -23,16 +23,15 @@ block_t *find_free_block(size_t size) {
         if (current->free) {
             if ((current->next && current->next->free) || (current->prev && current->prev->free)) {
                 current = coalesce_block(current);
-                printf("Coalesced block size: %ld", current->size);
             } 
             
             if (current->size >= size) {
                 if (current->size >= size + sizeof(block_t) + 4) {
                     current = split_block(current, size);
                 }
-                return current;
+                
             }
-
+            return current;
             
         }
         current = current->next;
