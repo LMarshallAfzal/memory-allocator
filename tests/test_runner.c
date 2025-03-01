@@ -44,6 +44,7 @@ int main() {
     // Test suite for allocator
     CU_pSuite allocator_suite = CU_add_suite("Allocator Test Suite", setup, teardown);
     CU_add_test(allocator_suite, "test_reuse_block", test_reuse_block);
+    CU_add_test(allocator_suite, "test_coalesce_block", test_coalesce_block);
 
 
     CU_console_run_tests();
