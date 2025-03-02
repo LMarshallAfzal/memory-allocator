@@ -155,3 +155,8 @@ block_t *get_user_blocks() {
     }
     return NULL;
 }
+
+void reset_allocator(void) {
+    head_block = NULL;
+    current_strategy = FIRST_FIT;
+}

@@ -25,6 +25,7 @@ block_t *find_free_block(size_t size);
 block_t *split_block(block_t*, size_t);
 block_t *coalesce_block(block_t*);
 block_t *get_user_blocks();
+void reset_allocator(void);
 
 void *malloc(size_t size);
 void free(void *ptr);
