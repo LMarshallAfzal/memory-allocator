@@ -4,6 +4,7 @@
 #include "allocator.h"
 
 allocation_strategy_t current_strategy = FIRST_FIT;
+block_t *head_block = NULL;
 
 /**
  * set_allocation_strategy - Sets the allocation strategy to use
@@ -69,13 +70,13 @@ block_t *find_free_block(size_t size) {
 
     // Return the appropriate block based on strategy
     if (current_strategy == BEST_FIT) {
-        if (best->size >= size + sizeof(block_t) + 4) {
+        if (best && best->size >= size + sizeof(block_t) + 4) {
             best = split_block(best, size);
         }
         return best;
 
     } else {
-        if (worst->size >= size + sizeof(block_t) + 4) {
+        if (worst && worst->size >= size + sizeof(block_t) + 4) {
             worst = split_block(worst, size);
         }
         return worst;
