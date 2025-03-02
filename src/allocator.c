@@ -3,22 +3,12 @@
 #include <unistd.h>
 #include "allocator.h"
 
-block_t *head_block;
-block_t *find_free_block(size_t);
-block_t *split_block(block_t*, size_t);
-block_t *coalesce_block(block_t*);
-
-
-// Allocation strategy enum (first-fit, best-fit, worst-fit)
-typedef enum {
-    FIRST_FIT,
-    BEST_FIT,
-    WORST_FIT
-} allocation_strategy_t;
-
 allocation_strategy_t current_strategy = FIRST_FIT;
 
-// Set allocation strategy
+/**
+ * set_allocation_strategy - Sets the allocation strategy to use
+ * @strategy: The strategy to use (FIRST_FIT, BEST_FIT, or WORST_FIT)
+ */
 void set_allocation_strategy(allocation_strategy_t strategy) {
     current_strategy = strategy;
 }
@@ -27,14 +17,17 @@ void set_allocation_strategy(allocation_strategy_t strategy) {
  * find_free_block - Searches linked list for available memory block
  * @size: Minimum size (in bytes) of free block
  * 
- * Searches the linked list for an available block of the required size.
+ * Searches the linked list for an available block of the required size
+ * based on the current allocation strategy
  * 
  * Return: A pointer to available block, NULL if no available block was found.
  */
 block_t *find_free_block(size_t size) {
     block_t *current = head_block;
+    block_t *best = NULL;
+    block_t *worst = NULL;
 
-    // Coalesce adjacent blocks before searching
+    // Coalesce adjacent free blocks before searching
     block_t *temp = head_block;
     while (temp != NULL) {
         if (temp->free) {
@@ -45,14 +38,12 @@ block_t *find_free_block(size_t size) {
         temp = temp->next;
     }
 
-    // First fit allocation
+    // First-fit allocation strategy
     if (current_strategy == FIRST_FIT) {
         while (current != NULL) {
-            if (current->free) {            
-                if (current->size >= size) {
-                    if (current->size >= size + sizeof(block_t) + 4) {
-                        current = split_block(current, size);
-                    }
+            if (current->free && current->size >= size) {            
+                if (current->size >= size + sizeof(block_t) + 4) {
+                    current = split_block(current, size);
                 }
                 return current;
                 
@@ -62,9 +53,33 @@ block_t *find_free_block(size_t size) {
         return NULL;
     }
 
-    // Best-fit and worst-fit
+    // Best-fit and Worst-fit allocation strategies
+    while (current != NULL) {
+        if (current->free && current->size >= size) {
+            if (best == NULL || current->size < best->size) {
+                best = current;
+            }
 
+            if (worst == NULL || current->size > worst->size) {
+                worst = current;
+            }
+        }
+        current = current->next;
+    }
 
+    // Return the appropriate block based on strategy
+    if (current_strategy == BEST_FIT) {
+        if (best->size >= size + sizeof(block_t) + 4) {
+            best = split_block(best, size);
+        }
+        return best;
+
+    } else {
+        if (worst->size >= size + sizeof(block_t) + 4) {
+            worst = split_block(worst, size);
+        }
+        return worst;
+    }
 }
 
 /**
@@ -128,14 +143,14 @@ block_t *coalesce_block(block_t *block) {
     return block;
 }
 
-
 /**
  * get_user_blocks - Retrieves first user generated memory block
  * Return: First user generated memory block or NULL
  */
-block_t* get_user_blocks() {
+block_t *get_user_blocks() {
     if (head_block != NULL && head_block->next != NULL) {
-        return head_block->next->next;  // Skip first two system-created blocks
+        // Skip first two system-created blocks
+        return head_block->next->next;  
     }
     return NULL;
 }
