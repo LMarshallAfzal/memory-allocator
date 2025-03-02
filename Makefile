@@ -1,5 +1,5 @@
 CFLAGS = -g -Wall
-INCLUDES = -Iinclude -Itests -Itests/malloc -Itests/free -Itests/find_free_block
+INCLUDES = -Iinclude -Itests -Itests/malloc -Itests/free -Itests/find_free_block -Itests/utils
 
 LDLIBS = -lcunit
 
@@ -17,7 +17,7 @@ all: $(EXEC_DIR)/$(EXEC) $(EXEC_DIR)/$(TEST_EXEC)
 $(EXEC_DIR)/$(EXEC): $(OBJ_DIR)/allocator.o $(OBJ_DIR)/free.o $(OBJ_DIR)/malloc.o $(OBJ_DIR)/main.o
 	gcc $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-$(EXEC_DIR)/$(TEST_EXEC): $(OBJ_DIR)/allocator.o $(OBJ_DIR)/free.o $(OBJ_DIR)/malloc.o $(OBJ_DIR)/test_runner.o $(OBJ_DIR)/test_malloc.o $(OBJ_DIR)/test_free.o $(OBJ_DIR)/test_find_free_block.o $(OBJ_DIR)/test_allocator.o
+$(EXEC_DIR)/$(TEST_EXEC): $(OBJ_DIR)/allocator.o $(OBJ_DIR)/free.o $(OBJ_DIR)/malloc.o $(OBJ_DIR)/test_runner.o $(OBJ_DIR)/test_utils.o $(OBJ_DIR)/test_malloc.o $(OBJ_DIR)/test_free.o $(OBJ_DIR)/test_find_free_block.o $(OBJ_DIR)/test_allocator.o
 	gcc $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIRS)/%.c | $(OBJ_DIR)
@@ -25,6 +25,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIRS)/%.c | $(OBJ_DIR)
 	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(TEST_DIRS)/%.c | $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)
+	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(TEST_DIRS)/utils/%.c | $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)
 	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 

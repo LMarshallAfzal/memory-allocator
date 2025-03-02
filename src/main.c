@@ -5,7 +5,6 @@
 #define MAX_ALLOCATIONS 100
 
 int main(void) {
-    head_block = NULL;
     void *allocations[MAX_ALLOCATIONS] = {0};
     int num_allocations = 0;
     int choice;
@@ -19,7 +18,8 @@ int main(void) {
         printf(" 1. Allocate memory\n");
         printf(" 2. Free memory\n");
         printf(" 3. Display memory blocks\n");
-        printf(" 4. Exit\n");
+        printf(" 4. Set allocation strategy\n");
+        printf(" 5. Exit\n");
         printf("Enter your choice: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -49,22 +49,42 @@ int main(void) {
                 break;
             }
             case 2: {
-                if (num_allocations == 0) {
+                void *available_allocs[MAX_ALLOCATIONS];
+                int available_count = 0;
+
+                for (int i = 0; i < num_allocations; i++) {
+                    if (allocations[i] != NULL) {
+                        available_allocs[available_count++] = allocations[i];
+                    }
+                }
+
+                if (available_count == 0) {
                     printf("No allocations to free.\n");
                     break;
                 }
+
+                printf("\nAvailable allocations:\n");
+                for (int i = 0; i < available_count; i++) {
+                    block_t *block_header = (block_t *)((char *)available_allocs[i] - sizeof(block_t));
+                    printf(" %d: address=%p, size=%zu\n", i, available_allocs[i], block_header->size);
+                }
+
                 int index;
-                printf("Enter allocation index to free (0 to %d):", num_allocations - 1);
-                if (scanf("%d", &index) != 1 || index < 0 || index >= num_allocations) {
+                printf("\nEnter allocation index to free (0 to %d): ", available_count - 1);
+                if (scanf("%d", &index) != 1 || index < 0 || index >= available_count) {
                     printf("Invalid index. Returning to menu.\n");
                     break;
                 }
-                if (allocations[index] != NULL) {
-                    free(allocations[index]);
-                    printf("Freed memory at index %d (address %p)\n", index, allocations[index]);
-                    allocations[index] = NULL;
-                } else {
-                    printf("Allocation at index %d is already freed.\n", index);
+                
+                void *ptr_to_free = available_allocs[index];
+                printf("Freed memory at address %p\n", ptr_to_free);
+                free(ptr_to_free);
+                
+                for (int i = 0; i < num_allocations; i++) {
+                    if (allocations[i] == ptr_to_free) {
+                        allocations[i] = NULL;
+                        break;
+                    }
                 }
                 break;
             }
@@ -85,6 +105,35 @@ int main(void) {
                 break;
             }
             case 4: {
+                int strategy;
+                printf("Select allocation strategy:\n");
+                printf(" 1. First-Fit (allocate first block that fits)\n");
+                printf(" 2. Best-Fit (allocate smallest block that fits)\n");
+                printf(" 3. Worst-Fit (allocate largest block that fits)\n");
+                printf(" Enter strategy (1-3): ");
+
+                if (scanf("%d", &strategy) != 1 || strategy < 1 || strategy > 3) {
+                    printf("Invalid strategy selection. Returning to menu.\n");
+                    break;
+                }
+
+                switch(strategy) {
+                    case 1:
+                        set_allocation_strategy(FIRST_FIT);
+                        printf("Strategy set to First-Fit\n");
+                        break;
+                    case 2:
+                        set_allocation_strategy(BEST_FIT);
+                        printf("Strategy set to Best-Fit\n");
+                        break;
+                    case 3:
+                        set_allocation_strategy(WORST_FIT);
+                        printf("Strategy set to Worst-Fit\n");
+                        break;
+                }
+                break;
+            }
+            case 5: {
                 printf("Exiting demo, Goodbye!\n");
                 return 0;
             }
