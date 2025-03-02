@@ -8,6 +8,21 @@ block_t *find_free_block(size_t);
 block_t *split_block(block_t*, size_t);
 block_t *coalesce_block(block_t*);
 
+
+// Allocation strategy enum (first-fit, best-fit, worst-fit)
+typedef enum {
+    FIRST_FIT,
+    BEST_FIT,
+    WORST_FIT
+} allocation_strategy_t;
+
+allocation_strategy_t current_strategy = FIRST_FIT;
+
+// Set allocation strategy
+void set_allocation_strategy(allocation_strategy_t strategy) {
+    current_strategy = strategy;
+}
+
 /**
  * find_free_block - Searches linked list for available memory block
  * @size: Minimum size (in bytes) of free block
@@ -19,24 +34,37 @@ block_t *coalesce_block(block_t*);
 block_t *find_free_block(size_t size) {
     block_t *current = head_block;
 
-    while (current != NULL) {
-        if (current->free) {
-            if ((current->next && current->next->free) || (current->prev && current->prev->free)) {
-                current = coalesce_block(current);
-            } 
-            
-            if (current->size >= size) {
-                if (current->size >= size + sizeof(block_t) + 4) {
-                    current = split_block(current, size);
+    // Coalesce adjacent blocks before searching
+    block_t *temp = head_block;
+    while (temp != NULL) {
+        if (temp->free) {
+            if ((temp->next && temp->next->free) || (temp->prev && temp->prev->free)) {
+                temp = coalesce_block(temp);
+            }
+        }
+        temp = temp->next;
+    }
+
+    // First fit allocation
+    if (current_strategy == FIRST_FIT) {
+        while (current != NULL) {
+            if (current->free) {            
+                if (current->size >= size) {
+                    if (current->size >= size + sizeof(block_t) + 4) {
+                        current = split_block(current, size);
+                    }
                 }
+                return current;
                 
             }
-            return current;
-            
+            current = current->next;
         }
-        current = current->next;
+        return NULL;
     }
-    return NULL;
+
+    // Best-fit and worst-fit
+
+
 }
 
 /**
