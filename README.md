@@ -23,6 +23,7 @@ A basic heap memory allocator implementation, focusing on the core processes of 
 The `malloc()` function is responsible for allocating a block memory of a block of memory of a specified size:
 1. **Size Check:** `malloc()` first checks if the requested size is valid (greater than zero). If the size is invalid it returns `NULL` to indicate an error.
 2. **Block Search:** The allocator maintains a linked list of free memory blocks. `malloc()` iterates through this list to find a block that is large enough to satisfy the requested size. and returns the block to the user.
+3. **Return to User:** The address of the usable portion of the allocated block is returned to the user.
 
 ### Memory Deallocation `free()`
 The `free()` function is responsible for returning a previously allocated memory block to the pool of available memory:
@@ -34,8 +35,21 @@ The `free()` function is responsible for returning a previously allocated memory
 
 ### Splitting
 The `split_block()` function is responsible for splitting one large unallocated block into two smaller ones. This reduced wasted memory because only the required amount of memory is used the remainder can be used for other processes.
+* Reduced internal fragmentation by only allocating the memory that's acutally needed.
+* Allows the remaining memory to be used for other allocations.
+* Improves overall memory utilisation.
 
 ### Coalescing
 The `coalesce_block()` function is responsible for merging multiple smaller blocks to reduce fragmentation in memory.
+* Reduces external fragmentation in the heap.
+* Helps ensure larger allocation requests can be satisfied.
+* Simplifies the free block list by reducing the number of entries.
+
+### Allocation Strategies
+The allocator support multiple strategies for find free blocks:
+1. **First-Fit:** Returns the first free block that's is large enough to satisfy the request
+2. **Best-Fit:** Returns the smallest free block that fits the requested size
+3. **Worst-Fit:** Returns the largest free block available
+
 ## Author(s)
 [Leonard Marshall Afzal](https://github.com/LMarshallAfzal)
